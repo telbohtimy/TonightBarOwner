@@ -28,11 +28,11 @@ public class ParseOperations extends ParseObject {
                 if (object == null) {
                     Log.d("TEST", "The getFirst request failed.");
                 } else {
-                    Log.d("TEST", "Passed "+object.getString("password")+" "+object.getString("barId"));
+                    Log.d("TEST", "Passed "+object.getString("password")+" "+object.getString("bar"));
                     if (password.equals(object.getString("password"))){
                         validate=true;
                     }
-                    barId=object.getString("barId");
+                    barId=object.getString("bar");
                 }
             }
         });

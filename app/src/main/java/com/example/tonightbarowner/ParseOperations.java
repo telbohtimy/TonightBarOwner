@@ -1,4 +1,4 @@
-package com.example.tonight401.tonightbarowner;
+package com.example.tonightbarowner;
 
 import android.util.Log;
 

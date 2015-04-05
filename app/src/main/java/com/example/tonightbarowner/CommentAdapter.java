@@ -17,14 +17,19 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class CommentAdapter extends ParseQueryAdapter<ParseObject>{
-    public CommentAdapter(Context context, final String venueIds) {
+    public CommentAdapter(Context context, final String venueIds, final int sort) {
         super(context, new ParseQueryAdapter.QueryFactory<ParseObject>() {
             @Override
             public ParseQuery create() {
                 ParseQuery query = new ParseQuery("Comments");
                 query.whereEqualTo("barId", venueIds);
-                query.orderByDescending("createdAt");
-
+                if (sort == 0) {
+                    query.orderByDescending("createdAt");
+                } else if (sort == 1) {
+                    query.orderByDescending("likes");
+                } else if (sort == 2) {
+                    query.orderByDescending("dislikes");
+                }
                 return query;
             }
         });
@@ -38,19 +43,21 @@ public class CommentAdapter extends ParseQueryAdapter<ParseObject>{
 
         super.getItemView(object, v, parent);
 
-        // Add and download the image
         ParseImageView commentImage = (ParseImageView) v.findViewById(R.id.comment_image);
         ParseFile imageFile = object.getParseFile("photo");
         if (imageFile != null) {
             commentImage.setParseFile(imageFile);
             commentImage.loadInBackground();
         }
+        else{
+            commentImage.setImageResource(android.R.color.transparent);
+        }
+
 
         TextView userTextView = (TextView) v.findViewById(R.id.user);
         userTextView.setText(object.getString("user"));
 
         TextView postTimeTextView = (TextView) v.findViewById(R.id.post_time);
-
         Date postTime = object.getCreatedAt();
         Date currentTime = new Date();
         long diff = currentTime.getTime() - postTime.getTime();
@@ -105,9 +112,12 @@ public class CommentAdapter extends ParseQueryAdapter<ParseObject>{
         TextView commentTextView = (TextView) v.findViewById(R.id.comment_text);
         commentTextView.setText(object.getString("commentText"));
 
-        Integer totalLikes = object.getInt("likes") - object.getInt("dislikes");
+        Integer likes = object.getInt("likes");
+        Integer dislikes = object.getInt("dislikes");
         final TextView likesTextView = (TextView) v.findViewById(R.id.likes);
-        likesTextView.setText(totalLikes.toString());
+        final TextView dislikesTextView = (TextView) v.findViewById(R.id.dislikes);
+        likesTextView.setText(likes.toString());
+        dislikesTextView.setText(dislikes.toString());
 
         ImageButton deleteButton = (ImageButton) v.findViewById(R.id.delete_button);
         deleteButton.setOnClickListener(new View.OnClickListener() {

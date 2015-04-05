@@ -1,5 +1,8 @@
 package com.example.tonightbarowner;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -27,7 +30,7 @@ public class CommentList extends ActionBarActivity {
         barId = intent.getStringExtra("barId");
 
         commentList = (ListView) findViewById(R.id.comment_list);
-        commentAdapter = new CommentAdapter(this, barId);
+        commentAdapter = new CommentAdapter(this, barId, 0);
         commentAdapter.notifyDataSetChanged();
         commentAdapter.setObjectsPerPage(10);
         commentList.setAdapter(commentAdapter);
@@ -69,8 +72,22 @@ public class CommentList extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_sort) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Sort by...")
+                    .setItems(R.array.sort_array, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // The 'which' argument contains the index position
+                            // of the selected item
+                            commentAdapter = new CommentAdapter(getApplicationContext(), barId, which);
+                            commentAdapter.notifyDataSetChanged();
+                            commentAdapter.setObjectsPerPage(10);
+                            commentList.setAdapter(commentAdapter);
+                        }
+                    });
+            AlertDialog alertDialog = builder.create();
+
+            alertDialog.show();
         }
 
         return super.onOptionsItemSelected(item);
